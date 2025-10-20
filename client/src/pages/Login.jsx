@@ -85,7 +85,7 @@ const Login = () => {
     loginError,
   ]);
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full mt-24">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Tabs defaultValue="signup">
           <TabsList className="w-full">
