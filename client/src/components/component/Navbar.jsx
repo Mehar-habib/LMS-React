@@ -66,7 +66,7 @@ export default function Navbar() {
 
       {/* mobile device */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
-        <h1 className="font-extrabold text-2xl">E-Learning</h1>
+        <h1 className="font-extrabold text-2xl ">E-Learning</h1>
         <MobileNavbar />
       </div>
     </div>
@@ -88,7 +88,7 @@ const MobileNavbar = () => {
       </SheetTrigger>
       <SheetContent className={"flex flex-col"}>
         <SheetHeader
-          className={"flex flex-row items-center justify-between mt-2"}
+          className={"flex flex-row items-center justify-between mt-10"}
         >
           <SheetTitle>E-Learning</SheetTitle>
           <DarkMode />
