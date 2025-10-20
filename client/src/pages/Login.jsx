@@ -18,6 +18,7 @@ import {
 } from "../features/api/authApi";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
@@ -26,6 +27,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const [
     registerUser,
@@ -72,6 +74,7 @@ const Login = () => {
     }
     if (isLoginSuccess && loginData) {
       toast.success(loginData.message || "User logged in successfully");
+      navigate("/");
     }
     if (loginError) {
       toast.error(loginError.data.message || "login failed");
@@ -137,6 +140,7 @@ const Login = () => {
               </CardContent>
               <CardFooter>
                 <Button
+                  type="submit"
                   disabled={isRegisterLoading}
                   onClick={() => handleRegistration("signup")}
                 >
@@ -186,6 +190,7 @@ const Login = () => {
               </CardContent>
               <CardFooter>
                 <Button
+                  type="submit"
                   disabled={isLoginLoading}
                   onClick={() => handleRegistration("login")}
                 >

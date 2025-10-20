@@ -18,6 +18,7 @@ export default function HeroSection() {
             className={
               "flex-grow border-none focus-visible:ring-0 px-6 py-3 dark:text-gray-100 "
             }
+            placeholder="Search for Courses"
           />
           <Button className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-3 rounded-r-full hover:bg-blue-700 ">
             Search
