@@ -20,6 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const user = true;
@@ -46,8 +47,12 @@ export default function Navbar() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>My Learning</DropdownMenuItem>
-                <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="my-learning">My Learning</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="profile">Edit Profile</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Logout</DropdownMenuItem>
                 <DropdownMenuItem>
                   <Button>Dashboard</Button>
@@ -95,8 +100,13 @@ const MobileNavbar = () => {
         </SheetHeader>
         {/* <Separator className="mr-2" /> */}
         <nav className="flex flex-col space-y-4">
-          <span>My Learning</span>
-          <span>Edit Profile</span>
+          <span>
+            <Link to="my-learning">My Learning</Link>
+          </span>
+          <span>
+            {" "}
+            <Link to="profile">Edit Profile</Link>{" "}
+          </span>
           <span>Logout</span>
         </nav>
         {role === "instructor" && (
