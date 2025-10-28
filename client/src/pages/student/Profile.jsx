@@ -17,14 +17,59 @@ import {
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import Course from "./Course";
-import { useLoadUserQuery } from "../../features/api/authApi";
+import {
+  useLoadUserQuery,
+  useUpdateUserMutation,
+} from "../../features/api/authApi";
+import { useState } from "react";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Profile() {
-  const { data, isLoading } = useLoadUserQuery();
-  const { user } = data;
-  if (isLoading) {
-    return <h1>Profile Loading</h1>;
+  const [name, setName] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const { data, isLoading, refetch } = useLoadUserQuery();
+  const [
+    updateUser,
+    {
+      data: updateUserData,
+      isLoading: updateUserIsLoading,
+      error,
+      isSuccess,
+      isError,
+    },
+  ] = useUpdateUserMutation();
+
+  const onChangeHandler = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfilePhoto(file);
+  };
+
+  // ✅ Hooks must always be called before any condition or return
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success(updateUserData?.message || "Profile updated successfully");
+    }
+    if (isError) {
+      toast.error(error?.message || "Something went wrong");
+    }
+  }, [isSuccess, isError, error, updateUserData]);
+
+  // ✅ Safe destructuring
+  const user = data?.user;
+
+  if (isLoading || !user) {
+    return <h1>Profile Loading...</h1>;
   }
+
+  const updateUserHandler = async () => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("profilePhoto", profilePhoto);
+    await updateUser(formData);
+  };
+
   return (
     <div className="max-w-4xl mx-auto my-24 px-4 md:px-0">
       <h1 className="font-bold text-2xl">Profile</h1>
@@ -37,6 +82,7 @@ export default function Profile() {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
+
         <div>
           <div className="mb-2">
             <h1 className="font-semibold text-gray-900 dark:text-gray-100">
@@ -64,6 +110,7 @@ export default function Profile() {
               </span>
             </h1>
           </div>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button>Edit Profile</Button>
@@ -72,7 +119,8 @@ export default function Profile() {
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
-                  make changes to your profile here. Click save when you're done
+                  Make changes to your profile here. Click save when you're
+                  done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -81,18 +129,28 @@ export default function Profile() {
                   <Input
                     type="text"
                     className="col-span-3"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
                   />
                 </div>
 
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label>Profile Photo</Label>
-                  <Input type="file" className="col-span-3" accept="image/*" />
+                  <Input
+                    type="file"
+                    onChange={onChangeHandler}
+                    className="col-span-3"
+                    accept="image/*"
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button disabled={isLoading}>
-                  {isLoading ? (
+                <Button
+                  disabled={updateUserIsLoading}
+                  onClick={updateUserHandler}
+                >
+                  {updateUserIsLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
                       wait
@@ -106,6 +164,7 @@ export default function Profile() {
           </Dialog>
         </div>
       </div>
+
       <div>
         <h1 className="font-medium text-lg">Courses you are enrolled in</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
