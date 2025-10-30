@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import {
   Table,
@@ -56,9 +57,10 @@ const invoices = [
 ];
 
 export default function CourseTable() {
+  const navigate = useNavigate();
   return (
     <div>
-      <Button>Create a new Course</Button>
+      <Button onClick={() => navigate("create")}>Create a new Course</Button>
       <Table>
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
