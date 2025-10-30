@@ -34,6 +34,7 @@ export default function AddCourse() {
   useEffect(() => {
     if (isSuccess) {
       toast.success(data?.message || "Course created.");
+      navigate("/admin/courses");
     }
   }, [isSuccess, error]);
   return (
