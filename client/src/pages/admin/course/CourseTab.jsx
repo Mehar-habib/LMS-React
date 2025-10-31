@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RichTextEditor from "../../../components/RichTextEditor";
 import { Button } from "../../../components/ui/button";
 import {
@@ -20,10 +20,14 @@ import {
   SelectValue,
 } from "../../../components/ui/select";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEditCourseMutation } from "../../../features/courseApi";
+import { toast } from "sonner";
 
 export default function CourseTab() {
   const navigate = useNavigate();
+  const params = useParams();
+  const courseId = params.courseId;
   const [input, setInput] = useState({
     courseTitle: "",
     subTitle: "",
@@ -34,6 +38,8 @@ export default function CourseTab() {
     courseThumbnail: "",
   });
   const [previewThumbnail, setPreviewThumbnail] = useState("");
+  const [editCourse, { data, isLoading, isSuccess, error }] =
+    useEditCourseMutation();
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -54,11 +60,27 @@ export default function CourseTab() {
       fileReader.readAsDataURL(file);
     }
   };
-  const updateCourseHandler = () => {
-    console.log(input);
+  const updateCourseHandler = async () => {
+    const formData = new FormData();
+    formData.append("courseTitle", input.courseTitle);
+    formData.append("subTitle", input.subTitle);
+    formData.append("description", input.description);
+    formData.append("category", input.category);
+    formData.append("courseLevel", input.courseLevel);
+    formData.append("coursePrice", input.coursePrice);
+    formData.append("courseThumbnail", input.courseThumbnail);
+
+    await editCourse({ formData, courseId });
   };
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data.message || "Course updated successfully");
+    }
+    if (error) {
+      toast.error(error.data.message || "Something went wrong");
+    }
+  }, [isSuccess, error]);
   const isPublished = true;
-  const isLoading = false;
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
