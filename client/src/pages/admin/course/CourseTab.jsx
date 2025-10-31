@@ -21,7 +21,10 @@ import {
 } from "../../../components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditCourseMutation } from "../../../features/courseApi";
+import {
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
+} from "../../../features/courseApi";
 import { toast } from "sonner";
 
 export default function CourseTab() {
@@ -40,6 +43,22 @@ export default function CourseTab() {
   const [previewThumbnail, setPreviewThumbnail] = useState("");
   const [editCourse, { data, isLoading, isSuccess, error }] =
     useEditCourseMutation();
+  const { data: courseByIdData, isLoading: courseByIdLoading } =
+    useGetCourseByIdQuery(courseId);
+  useEffect(() => {
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course;
+      setInput({
+        courseTitle: course.courseTitle,
+        subTitle: course.subTitle,
+        description: course.description,
+        category: course.category,
+        courseLevel: course.courseLevel,
+        coursePrice: course.coursePrice,
+        courseThumbnail: setPreviewThumbnail(course.courseThumbnail),
+      });
+    }
+  }, [courseByIdData]);
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -80,6 +99,9 @@ export default function CourseTab() {
       toast.error(error.data.message || "Something went wrong");
     }
   }, [isSuccess, error]);
+  if (courseByIdLoading) {
+    return <Loader2 className="animate-spin" />;
+  }
   const isPublished = true;
   return (
     <Card>
@@ -127,7 +149,7 @@ export default function CourseTab() {
           <div className="flex items-center gap-5">
             <div>
               <Label>Category</Label>
-              <Select onValueChange={selectCategory}>
+              <Select value={input.category} onValueChange={selectCategory}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -156,7 +178,10 @@ export default function CourseTab() {
             </div>
             <div>
               <Label>Course Level</Label>
-              <Select onValueChange={selectCourseLevel}>
+              <Select
+                value={input.courseLevel}
+                onValueChange={selectCourseLevel}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a level" />
                 </SelectTrigger>
