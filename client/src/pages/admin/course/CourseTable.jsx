@@ -51,7 +51,12 @@ export default function CourseTable() {
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                <Button size="sm" variant="ghost">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => navigate(`${course._id}`)}
+                  className="cursor-pointer"
+                >
                   <Edit />
                 </Button>
               </TableCell>
