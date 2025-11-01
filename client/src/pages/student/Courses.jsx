@@ -1,8 +1,13 @@
 import { Skeleton } from "../../components/ui/skeleton";
+import { useGetPublishedCourseQuery } from "../../features/courseApi";
 import Course from "./Course";
 
 export default function Courses() {
-  const isLoading = false;
+  const { data, isLoading, isError } = useGetPublishedCourseQuery();
+  if (isError) {
+    return <h1>Some Error occurred while fetching Courses</h1>;
+  }
+
   return (
     <div className="bg-gray-50">
       <div className="max-w-7xl mx-auto p-6">
@@ -12,8 +17,9 @@ export default function Courses() {
             ? Array.from({ length: 8 }).map((_, index) => (
                 <CourseSkeleton key={index} />
               ))
-            : Array.from({ length: 8 }).map((_, index) => (
-                <Course key={index} />
+            : data?.courses &&
+              data.courses.map((course, index) => (
+                <Course key={index} course={course} />
               ))}
         </div>
       </div>
