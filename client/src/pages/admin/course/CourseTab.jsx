@@ -43,8 +43,11 @@ export default function CourseTab() {
   const [previewThumbnail, setPreviewThumbnail] = useState("");
   const [editCourse, { data, isLoading, isSuccess, error }] =
     useEditCourseMutation();
-  const { data: courseByIdData, isLoading: courseByIdLoading } =
-    useGetCourseByIdQuery(courseId);
+  const {
+    data: courseByIdData,
+    isLoading: courseByIdLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId);
   useEffect(() => {
     if (courseByIdData?.course) {
       const course = courseByIdData?.course;
@@ -94,6 +97,7 @@ export default function CourseTab() {
   useEffect(() => {
     if (isSuccess) {
       toast.success(data.message || "Course updated successfully");
+      refetch();
     }
     if (error) {
       toast.error(error.data.message || "Something went wrong");
@@ -189,8 +193,8 @@ export default function CourseTab() {
                   <SelectGroup>
                     <SelectLabel>Course Level</SelectLabel>
                     <SelectItem value="Beginner">Beginner</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Advance">Advanced</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
