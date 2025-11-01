@@ -266,3 +266,30 @@ export const getLectureById = async (req, res) => {
     });
   }
 };
+
+// public and unpublish course logic
+export const togglePublishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { publish } = req.query; //true, false
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found!",
+      });
+    }
+    course.isPublished = publish === "true";
+    await course.save();
+    const statusMessage = course.isPublished ? "Published" : "UnPublished";
+    return res.status(200).json({
+      success: true,
+      message: `Course ${statusMessage} successfully`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};

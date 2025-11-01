@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useEditCourseMutation,
   useGetCourseByIdQuery,
+  usePublishCourseMutation,
 } from "../../../features/courseApi";
 import { toast } from "sonner";
 
@@ -48,6 +49,7 @@ export default function CourseTab() {
     isLoading: courseByIdLoading,
     refetch,
   } = useGetCourseByIdQuery(courseId);
+  const [publishCourse] = usePublishCourseMutation();
   useEffect(() => {
     if (courseByIdData?.course) {
       const course = courseByIdData?.course;
@@ -94,6 +96,17 @@ export default function CourseTab() {
 
     await editCourse({ formData, courseId });
   };
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
+        refetch();
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to publish course");
+    }
+  };
   useEffect(() => {
     if (isSuccess) {
       toast.success(data.message || "Course updated successfully");
@@ -106,7 +119,6 @@ export default function CourseTab() {
   if (courseByIdLoading) {
     return <Loader2 className="animate-spin" />;
   }
-  const isPublished = true;
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -117,8 +129,16 @@ export default function CourseTab() {
           </CardDescription>
         </div>
         <div>
-          <Button variant="outline">
-            {isPublished ? "Unpublish" : "Publish"}
+          <Button
+            variant="outline"
+            disabled={courseByIdData?.course.lecture.length === 0}
+            onClick={() =>
+              publishStatusHandler(
+                courseByIdData?.course.isPublished ? "false" : "true"
+              )
+            }
+          >
+            {courseByIdData?.course.isPublished ? "Unpublish" : "Publish"}
           </Button>
           <Button>Remove Course</Button>
         </div>

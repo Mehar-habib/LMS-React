@@ -45,7 +45,12 @@ export default function CourseTable() {
               </TableCell>
               <TableCell>{course.coursePrice || "Free"}</TableCell>
               <TableCell>
-                <Badge>
+                <Badge
+                  className={
+                    course.isPublished &&
+                    "bg-green-500 text-white hover:bg-green-600"
+                  }
+                >
                   {course.isPublished ? "Published" : "Unpublished"}
                 </Badge>
               </TableCell>
