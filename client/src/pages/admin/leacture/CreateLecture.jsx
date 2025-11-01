@@ -5,7 +5,11 @@ import { Input } from "../../../components/ui/input";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useCreateLectureMutation } from "../../../features/courseApi";
+import {
+  useCreateLectureMutation,
+  useGetCourseLectureQuery,
+} from "../../../features/courseApi";
+import Lecture from "./Lecture";
 
 export default function CreateLecture() {
   const params = useParams();
@@ -14,12 +18,19 @@ export default function CreateLecture() {
   const navigate = useNavigate();
   const [createLecture, { data, isLoading, error, isSuccess }] =
     useCreateLectureMutation();
+  const {
+    data: lectureData,
+    isLoading: lectureLoading,
+    isError: lectureError,
+    refetch,
+  } = useGetCourseLectureQuery(courseId);
 
   const createLectureHandler = async () => {
     await createLecture({ lectureTitle, courseId });
   };
   useEffect(() => {
     if (isSuccess) {
+      refetch();
       toast.success(data.message || "Lecture created successfully");
     }
     if (error) {
@@ -64,6 +75,24 @@ export default function CreateLecture() {
               "Create Lecture"
             )}
           </Button>
+        </div>
+        <div className="mt-10">
+          {lectureLoading ? (
+            <p>Lecture Loading...</p>
+          ) : lectureError ? (
+            <p>Failed to load lectures.</p>
+          ) : lectureData?.lectures.length === 0 ? (
+            <p>No lectures found for this course.</p>
+          ) : (
+            lectureData.lectures.map((lecture, index) => (
+              <Lecture
+                key={lecture._id}
+                courseId={courseId}
+                lecture={lecture}
+                index={index}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
