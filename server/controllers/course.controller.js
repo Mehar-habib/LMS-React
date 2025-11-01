@@ -173,3 +173,14 @@ export const getCourseLecture = async (req, res) => {
     });
   }
 };
+
+// export const editLecture = async (req, res) => {
+//   try {
+//     const { lectureTitle, videoInfo, isPreviewFree } = req.body;
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//       message: "Something went wrong",
+//     });
+//   }
+// };
