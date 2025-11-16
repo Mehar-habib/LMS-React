@@ -10,49 +10,65 @@ import {
 import { Separator } from "../../components/ui/separator";
 import { Button } from "../../components/ui/button";
 import BuyCourseButton from "../../components/component/BuyCourseButton";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetCourseDetailWithStatusQuery } from "../../features/api/purchaseApi";
+import ReactPlayer from "react-player";
 
 export default function CourseDetail() {
-  const purchaseCourse = false;
+  const params = useParams();
+  const courseId = params.courseId;
+  const navigate = useNavigate();
+  const { data, isLoading, isError } =
+    useGetCourseDetailWithStatusQuery(courseId);
+  if (isLoading) return <h1>Loading...</h1>;
+  if (isError) return <h1>Failed to load course details</h1>;
+  const { course, purchased } = data;
+
+  const handleContinueCourse = async () => {
+    if (purchased) {
+      navigate(`/course-progress/${courseId}`);
+    }
+  };
   return (
     <div className="mt-20 space-y-5">
       <div className="bg-[#2d2f31] text-white">
         <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 flex flex-col gap-2">
-          <h1 className="font-bold text-2xl md:text-3xl">Course Title</h1>
+          <h1 className="font-bold text-2xl md:text-3xl">
+            {course?.courseTitle}
+          </h1>
           <p className="text-base md:text-lg">Course Sub Title</p>
           <p>
             Created By{" "}
-            <span className="text-[#c0c4fc] underline italic">Mehar HAbib</span>{" "}
+            <span className="text-[#c0c4fc] underline italic">
+              {course?.creator?.name}
+            </span>{" "}
           </p>
           <div className="flex items-center gap-2 text-sm">
             <BadgeInfo size={16} />
-            <p>Last updated 20-20-2025</p>
+            <p>Last updated {course?.updatedAt.split("T")[0]}</p>
           </div>
-          <p>Student enrolled 20</p>
+          <p>Student enrolled {course?.enrolledStudents.length}</p>
         </div>
       </div>
       <div className="max-w-7xl mx-auto my-5 px-4 md:px-8 flex flex-col lg:flex-row justify-between gap-10">
         <div className="w-full lg:w-1/2 space-y-5">
           <h1 className="font-bold text-xl md:text-2xl">Description</h1>
-          <p className="text-sm">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cupiditate
-            velit minus quia reiciendis accusamus perferendis, hic iste repellat
-            quidem. Tenetur, voluptatem dolorum dolore, ducimus necessitatibus
-            facere at perspiciatis ipsa natus, iure illo similique blanditiis
-            modi fugiat quis fugit dolor totam. Fugiat ab alias expedita
-            laboriosam error non ratione? Temporibus, expedita!
-          </p>
+          <p
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: course?.description }}
+          />
           <Card>
             <CardHeader>
               <CardTitle>Course Content</CardTitle>
               <CardDescription>4 lectures</CardDescription>
             </CardHeader>
             <CardContent>
-              {[1, 2, 3].map((_, idx) => (
+              {course.lecture.map((lecture, idx) => (
                 <div key={idx} className="flex items-center gap-3 text-sm">
                   <span>
                     {true ? <PlayCircle size={14} /> : <Lock size={14} />}
                   </span>
-                  <p>lecture Title</p>
+                  <p>{lecture.lectureTitle}</p>
                 </div>
               ))}
             </CardContent>
@@ -61,16 +77,25 @@ export default function CourseDetail() {
         <div className="w-full lg:w-1/3">
           <Card>
             <CardContent className="p-4 flex flex-col">
-              <div className="w-full aspect-video mb-4">React Player Video</div>
+              <div className="w-full aspect-video mb-4">
+                <ReactPlayer
+                  width="100%"
+                  height="100%"
+                  src={course.lecture[0].videoUrl}
+                  controls={true}
+                />
+              </div>
               <h1>lecture Title</h1>
               <Separator className="my-2" />
               <h1 className="text-lg md:text-xl">Course Price</h1>
             </CardContent>
             <CardFooter className="flex justify-center p-4">
-              {purchaseCourse ? (
-                <Button className="w-full">Continue Course</Button>
+              {purchased ? (
+                <Button className="w-full" onClick={handleContinueCourse}>
+                  Continue Course
+                </Button>
               ) : (
-                <BuyCourseButton />
+                <BuyCourseButton courseId={courseId} />
               )}
             </CardFooter>
           </Card>
