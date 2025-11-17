@@ -81,7 +81,7 @@ export default function Navbar() {
                 {user.role === "instructor" && (
                   <>
                     <DropdownMenuItem>
-                      <Button>Dashboard</Button>
+                      <Link to="/admin/dashboard">Dashboard</Link>
                     </DropdownMenuItem>
                   </>
                 )}
