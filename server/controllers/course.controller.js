@@ -32,6 +32,57 @@ export const createCourse = async (req, res) => {
     });
   }
 };
+// course.controller.js - Add detailed error logging
+export const searchCourse = async (req, res) => {
+  try {
+    const { query = "", categories = "", sortByPrice = "" } = req.query;
+
+    // Parse categories from string to array
+    let categoriesArray = [];
+    if (categories && categories.trim() !== "") {
+      categoriesArray = categories.split(",");
+    }
+    // Build search criteria
+    const searchCriteria = {
+      isPublished: true,
+      $or: [
+        { courseTitle: { $regex: query, $options: "i" } },
+        { subTitle: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ],
+    };
+
+    // If specific categories are selected
+    if (categoriesArray.length > 0) {
+      searchCriteria.category = { $in: categoriesArray };
+    }
+
+    // Build sort options
+    const sortOptions = {};
+    if (sortByPrice === "low") {
+      sortOptions.coursePrice = 1;
+    } else if (sortByPrice === "high") {
+      sortOptions.coursePrice = -1;
+    }
+
+    // Execute search
+    let courses = await Course.find(searchCriteria)
+      .populate({ path: "creator", select: "name photoUrl" })
+      .sort(sortOptions);
+
+    return res.status(200).json({
+      success: true,
+      courses: courses || [],
+      count: courses.length,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
 export const getPublishedCourse = async (_, res) => {
   try {
     const courses = await Course.find({ isPublished: true }).populate({
@@ -241,7 +292,6 @@ export const removeLecture = async (req, res) => {
   try {
     const { lectureId } = req.params;
     const lecture = await Lecture.findByIdAndDelete(lectureId);
-    console.log(lecture, "lecture fr+++++");
     if (!lecture) {
       return res.status(400).json({
         message: "Lecture not found",
@@ -308,7 +358,6 @@ export const togglePublishCourse = async (req, res) => {
       message: `Course ${statusMessage} successfully`,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",

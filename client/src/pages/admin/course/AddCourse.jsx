@@ -67,22 +67,22 @@ export default function AddCourse() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Category</SelectLabel>
-                <SelectItem value="Next Js">Next.js</SelectItem>
-                <SelectItem value="Data Science">Data Science</SelectItem>
-                <SelectItem value="Frontend Development">
+                <SelectItem value="nextjs">Next.js</SelectItem>
+                <SelectItem value="data science">Data Science</SelectItem>
+                <SelectItem value="frontend development">
                   Frontend Development
                 </SelectItem>
-                <SelectItem value="Backend Development">
-                  Backend Development
+                <SelectItem value="full stack development">
+                  FULL STACK Development
                 </SelectItem>
-                <SelectItem value="MERN Stack Development">
+                <SelectItem value="backend">Backend Development</SelectItem>
+                <SelectItem value="mern stack development">
                   MERN Stack Development
                 </SelectItem>
-                <SelectItem value="Javascript">Javascript</SelectItem>
+                <SelectItem value="javascript">Javascript</SelectItem>
                 <SelectItem value="Python">Python</SelectItem>
-                <SelectItem value="Docker">Docker</SelectItem>
-                <SelectItem value="MongoDB">MongoDB</SelectItem>
-                <SelectItem value="HTML">HTML</SelectItem>
+                <SelectItem value="mongodb">MongoDB</SelectItem>
+                <SelectItem value="html">HTML</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
